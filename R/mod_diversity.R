@@ -48,7 +48,7 @@ mod_diversity_ui <- function(id){
                                                                                          "MAF Histogram",
                                                                                          "OHet Histogram",
                                                                                          "Marker Plot")),
-                   selectInput(inputId = ns('div_image_type'), label = 'File Type', choices = c("jpeg","pdf","tiff","png"), selected = "jpeg"),
+                   selectInput(inputId = ns('div_image_type'), label = 'File Type', choices = c("jpeg","tiff","png","svg"), selected = "jpeg"),
                    sliderInput(inputId = ns('div_image_res'), label = 'Resolution', value = 300, min = 50, max = 1000, step=50),
                    sliderInput(inputId = ns('div_image_width'), label = 'Width', value = 8, min = 1, max = 20, step=0.5),
                    sliderInput(inputId = ns('div_image_height'), label = 'Height', value = 5, min = 1, max = 20, step = 0.5),
@@ -66,7 +66,16 @@ mod_diversity_ui <- function(id){
              box(
                title = "Plots", status = "info", solidHeader = FALSE, width = 12, height = 550, maximizable = T,
                bs4Dash::tabsetPanel(
-                 tabPanel("Dosage Plot", plotOutput(ns('dosage_plot')),style = "overflow-y: auto; height: 500px"),
+                 id = ns('diversity_plot_tabs'),
+                 type = "tabs",
+                 tabPanel(
+                   "Dosage Plot",
+                   div(
+                     plotOutput(ns('dosage_plot'), height = "420px"), # Adjusted height
+                     uiOutput(ns('dosage_text'))                     # Text placeholder directly below plot
+                   ),
+                   style = "overflow-y: auto; height: 500px"
+                 ),
                  tabPanel("MAF Plot", plotOutput(ns('maf_plot')),style = "overflow-y: auto; height: 500px"),
                  tabPanel("OHet Plot", plotOutput(ns('het_plot')),style = "overflow-y: auto; height: 500px"),
                  tabPanel("Marker Plot", plotOutput(ns('marker_plot')),style = "overflow-y: auto; height: 500px"), #Can this be an interactive plotly?
@@ -96,6 +105,7 @@ mod_diversity_ui <- function(id){
 mod_diversity_server <- function(input, output, session, parent_session){
 
     ns <- session$ns
+
 
     # Help links
     observeEvent(input$goPar, {
@@ -132,6 +142,24 @@ mod_diversity_server <- function(input, output, session, parent_session){
                         selected = "Genomic_Diversity_cite")
       # expand specific box
       updateBox(id = "Genomic_Diversity_box", action = "toggle", session = parent_session)
+    })
+    
+    ##UI text
+    output$dosage_text <- renderUI({
+      # Check if input$plot_tabs is NULL before evaluating it
+      if (is.null(input$diversity_plot_tabs)) {
+        return(NULL)
+      }
+      
+      # Render the text only for the "Dosage Plot" tab
+      if (input$diversity_plot_tabs == "Dosage Plot" && !is.null(diversity_items$dosage_df)) {
+        div(
+          style = "color: grey; text-align: left; margin-top: 3px;",
+          "Note: 0 = homozygous reference"
+        )
+      } else {
+        NULL  # Do not render anything for other tabs
+      }
     })
 
     #######Genomic Diversity analysis
@@ -437,6 +465,8 @@ mod_diversity_server <- function(input, output, session, parent_session){
           paste("genomic-diversity-", Sys.Date(), ".jpg", sep="")
         } else if (input$div_image_type == "png") {
           paste("genomic-diversity-", Sys.Date(), ".png", sep="")
+        } else if (input$div_image_type == "svg") {
+          paste("genomic-diversity-", Sys.Date(), ".svg", sep="")
         } else {
           paste("genomic-diversity-", Sys.Date(), ".tiff", sep="")
         }
@@ -448,6 +478,8 @@ mod_diversity_server <- function(input, output, session, parent_session){
           jpeg(file, width = as.numeric(input$div_image_width), height = as.numeric(input$div_image_height), res= as.numeric(input$div_image_res), units = "in")
         } else if (input$div_image_type == "png") {
           png(file, width = as.numeric(input$div_image_width), height = as.numeric(input$div_image_height), res= as.numeric(input$div_image_res), units = "in")
+        } else if (input$div_image_type == "svg") {
+          svg(file, width = as.numeric(input$div_image_width), height = as.numeric(input$div_image_height))
         } else {
           tiff(file, width = as.numeric(input$div_image_width), height = as.numeric(input$div_image_height), res= as.numeric(input$div_image_res), units = "in")
         }
