@@ -1,6 +1,11 @@
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/Breeding-Insight/BIGapp/workflows/R-CMD-check/badge.svg)](https://github.com/Breeding-Insight/BIGapp/actions)
+![GitHub Release](https://img.shields.io/github/v/release/Breeding-Insight/BIGapp)
 [![Development Status](https://img.shields.io/badge/development-active-blue.svg)](https://img.shields.io/badge/development-active-blue.svg)
+![GitHub License](https://img.shields.io/github/license/Breeding-Insight/BIGapp)
+
+
+
 <!-- badges: end -->
 
 <div align="center">
@@ -15,7 +20,7 @@ BIGapp is a user-friendly web application built with R and Shiny, designed to si
 
 ## Key Features
 
-- **Web-Based Interface:** Access BIGapp through your web browser, eliminating the need for complex software installations.
+- **Web-Based Interface:** Access BIGapp through your web browser, eliminating the need for using command-line inputs to perform genomic analysis.
 - **Genotype Processing:**
     -  Call genotypes from read counts.
     -  Filter SNPs based on various criteria.
@@ -49,22 +54,25 @@ New to BIGapp? Check out our comprehensive tutorial to guide you through the pro
 
 ### Online Preview
 
-Try out a live demo of BIGapp here: [BIGapp Demo](https://big-demo.shinyapps.io/bigapp/)
+Try out a live demo of BIGapp here: [BIGapp Demo](https://big-demo.shinyapps.io/bigapp-main/)
 
 ### Local Installation
 
 1. **Install R:** Download and install the latest version of R from [CRAN](https://cran.r-project.org/).
 2. **Open Terminal (macOS/Linux) or R Console (Windows).**
-3. **Install and Run:**
+3. **Installation:**
     ```R
     if (!require("BiocManager", quietly = TRUE))
         install.packages("BiocManager")
         install.packages("remotes")
     
     BiocManager::install("Breeding-Insight/BIGapp", dependencies = TRUE)
+    ```
+4. **Starting BIGapp:**
+    ```R
     BIGapp::run_app()
     ```
-4. **Access in Browser:** The BIGapp interface will open in your default web browser.
+5. **Access in Browser:** The BIGapp interface will open in your default web browser.
 
 ### Online Deployment (Coming Soon)
 
